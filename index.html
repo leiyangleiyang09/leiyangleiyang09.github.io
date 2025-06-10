@@ -1,13 +1,4 @@
-            <script>
-                document.getElementById('createPodcastBtn').addEventListener('click', function(e) {
-                    e.preventDefault();
-                    document.getElementById('notebookLmEmbed').style.display = 'block';
-                });
-                
-                document.getElementById('closeNotebookLmBtn').addEventListener('click', function() {
-                    document.getElementById('notebookLmEmbed').style.display = 'none';
-                });
-            </script><!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
@@ -370,6 +361,318 @@
             margin-bottom: 0.5rem;
             color: var(--secondary);
         }
+
+        /* Chatbot Styles */
+        .chatbot-widget {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            z-index: 1000;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        
+        .chat-bubble {
+            width: 60px;
+            height: 60px;
+            background: linear-gradient(135deg, var(--secondary) 0%, #2c4570 100%);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+            transition: all 0.3s ease;
+            position: relative;
+        }
+        
+        .chat-bubble:hover {
+            transform: scale(1.1);
+            box-shadow: 0 6px 20px rgba(0, 0, 0, 0.2);
+        }
+        
+        .chat-bubble.active {
+            background: #ff6b6b;
+        }
+        
+        .chat-icon {
+            width: 24px;
+            height: 24px;
+            fill: white;
+        }
+        
+        .notification-badge {
+            position: absolute;
+            top: -5px;
+            right: -5px;
+            width: 20px;
+            height: 20px;
+            background: #ff4757;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 10px;
+            font-weight: bold;
+            color: white;
+            animation: pulse 2s infinite;
+        }
+        
+        @keyframes pulse {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.1); }
+            100% { transform: scale(1); }
+        }
+        
+        .chat-window {
+            position: absolute;
+            bottom: 80px;
+            right: 0;
+            width: 350px;
+            height: 500px;
+            background: white;
+            border-radius: 16px;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+            display: none;
+            flex-direction: column;
+            overflow: hidden;
+            border: 1px solid #e0e0e0;
+        }
+        
+        .chat-window.show {
+            display: flex;
+            animation: slideUp 0.3s ease-out;
+        }
+        
+        @keyframes slideUp {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        
+        .chat-header {
+            background: linear-gradient(135deg, var(--secondary) 0%, #2c4570 100%);
+            color: white;
+            padding: 16px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .chat-header h3 {
+            margin: 0;
+            font-size: 16px;
+            font-weight: 600;
+        }
+        
+        .chat-header p {
+            margin: 4px 0 0 0;
+            font-size: 12px;
+            opacity: 0.9;
+        }
+        
+        .close-button {
+            background: none;
+            border: none;
+            color: white;
+            cursor: pointer;
+            padding: 4px;
+            border-radius: 4px;
+            transition: background-color 0.2s;
+        }
+        
+        .close-button:hover {
+            background-color: rgba(255, 255, 255, 0.1);
+        }
+        
+        .chat-messages {
+            flex: 1;
+            overflow-y: auto;
+            padding: 16px;
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+        
+        .chat-message {
+            max-width: 85%;
+            padding: 10px 14px;
+            border-radius: 16px;
+            font-size: 14px;
+            line-height: 1.4;
+            word-wrap: break-word;
+        }
+        
+        .user-message {
+            background: var(--secondary);
+            color: white;
+            align-self: flex-end;
+            border-bottom-right-radius: 4px;
+        }
+        
+        .bot-message {
+            background: #f1f3f4;
+            color: #333;
+            align-self: flex-start;
+            border-bottom-left-radius: 4px;
+        }
+        
+        .error-message {
+            background: #ffebee;
+            color: #c62828;
+            align-self: flex-start;
+            border-bottom-left-radius: 4px;
+            border: 1px solid #ffcdd2;
+        }
+        
+        .typing-indicator {
+            display: none;
+            align-self: flex-start;
+            padding: 12px 16px;
+            background: #f1f3f4;
+            border-radius: 16px;
+            border-bottom-left-radius: 4px;
+        }
+        
+        .typing-dots {
+            display: flex;
+            gap: 4px;
+        }
+        
+        .typing-dots span {
+            width: 6px;
+            height: 6px;
+            border-radius: 50%;
+            background-color: #999;
+            animation: typing 1.4s infinite both;
+        }
+        
+        .typing-dots span:nth-child(2) {
+            animation-delay: 0.2s;
+        }
+        
+        .typing-dots span:nth-child(3) {
+            animation-delay: 0.4s;
+        }
+        
+        @keyframes typing {
+            0%, 60%, 100% {
+                transform: translateY(0);
+            }
+            30% {
+                transform: translateY(-4px);
+            }
+        }
+        
+        .suggestion-chips {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 6px;
+            margin-top: 8px;
+        }
+        
+        .suggestion-chip {
+            background: #e3f2fd;
+            color: var(--secondary);
+            padding: 6px 10px;
+            border-radius: 12px;
+            font-size: 11px;
+            cursor: pointer;
+            border: 1px solid #bbdefb;
+            transition: all 0.2s;
+        }
+        
+        .suggestion-chip:hover {
+            background: #bbdefb;
+        }
+        
+        .chat-input-container {
+            padding: 12px 16px;
+            border-top: 1px solid #e0e0e0;
+            background: #fafafa;
+        }
+        
+        .chat-input-wrapper {
+            display: flex;
+            gap: 8px;
+            align-items: flex-end;
+        }
+        
+        .chat-input {
+            flex: 1;
+            padding: 10px 12px;
+            border: 1px solid #ddd;
+            border-radius: 20px;
+            outline: none;
+            font-size: 14px;
+            resize: none;
+            max-height: 80px;
+            min-height: 38px;
+            font-family: inherit;
+        }
+        
+        .chat-input:focus {
+            border-color: var(--secondary);
+            box-shadow: 0 0 0 2px rgba(74, 111, 165, 0.1);
+        }
+        
+        .chat-send-button {
+            width: 38px;
+            height: 38px;
+            background: var(--secondary);
+            border: none;
+            border-radius: 50%;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: background-color 0.2s;
+        }
+        
+        .chat-send-button:hover:not(:disabled) {
+            background: #2c4570;
+        }
+        
+        .chat-send-button:disabled {
+            background: #ccc;
+            cursor: not-allowed;
+        }
+        
+        .send-icon {
+            width: 16px;
+            height: 16px;
+            fill: white;
+        }
+        
+        /* Mobile responsive for chatbot */
+        @media (max-width: 480px) {
+            .chat-window {
+                width: calc(100vw - 40px);
+                height: 400px;
+                right: 20px;
+                left: 20px;
+            }
+            
+            .chatbot-widget {
+                right: 20px;
+                bottom: 20px;
+            }
+        }
+        
+        .chat-bubble.welcome {
+            animation: welcomePulse 3s ease-in-out;
+        }
+        
+        @keyframes welcomePulse {
+            0%, 100% { transform: scale(1); }
+            25% { transform: scale(1.1); }
+            50% { transform: scale(1); }
+            75% { transform: scale(1.05); }
+        }
         
         @media (max-width: 768px) {
             .hero h1 {
@@ -423,12 +726,31 @@
                     <span class="experience-date">Apr 2024 - Present</span>
                 </div>
                 <div class="experience-company">NSW Department of Education</div>
-                <p>Currently working on data migration from legacy databases to new schemas, leading Shopify data integration, developing data science pipelines, and collaborating with cross-functional teams.</p>
+                <div class="project-section">
+                    <p><strong>EduChat Project:</strong></p>
+                    <ul>
+                        <li>Conducted real-time NLP analysis on over 3 million educational chatbot interactions, powered by OpenAI, to monitor user engagement, perform topic modeling, and derive insights into user behaviors</li>
+                        <li>Developed and deployed zero-shot text classification methods to effectively moderate chatbot usage</li>
+                    </ul>
+                    
+                    <p><strong>Thrive Project:</strong></p>
+                    <ul>
+                        <li>Established a secure, scalable machine learning environment in Microsoft Fabric to enable external university researchers to access and analyze NSW educational datasets</li>
+                        <li>Delivered comprehensive data dictionaries, performed rigorous validation, and mentored researchers on analytical techniques and data best practices</li>
+                    </ul>
+                    
+                    <p><strong>Automated Data Dictionary and Data Validation:</strong></p>
+                    <ul>
+                        <li>Developed an automated metadata extraction and documentation tool, replacing manual processes, significantly enhancing accuracy, efficiency, and governance across SQL Server, Azure Fabric Lakehouse, and Power BI data cubes</li>
+                    </ul>
+                </div>
                 <div class="skills">
                     <span class="skill-tag">Python</span>
                     <span class="skill-tag">SQL</span>
-                    <span class="skill-tag">Data Analysis</span>
-                    <span class="skill-tag">Data Cleansing</span>
+                    <span class="skill-tag">NLP</span>
+                    <span class="skill-tag">MS Fabric</span>
+                    <span class="skill-tag">Machine Learning</span>
+                    <span class="skill-tag">Data Science Pipeline</span>
                 </div>
             </div>
             
@@ -442,9 +764,10 @@
                 <div class="skills">
                     <span class="skill-tag">Python</span>
                     <span class="skill-tag">SQL</span>
-                    <span class="skill-tag">MS Fabric</span>
-                    <span class="skill-tag">NLP</span>
+                    <span class="skill-tag">Data Analysis</span>
+                    <span class="skill-tag">Data Migration</span>
                     <span class="skill-tag">Machine Learning</span>
+                    <span class="skill-tag">Steamlit</span>
                 </div>
             </div>
             
@@ -665,41 +988,41 @@
             <div class="personal-section">
                 <div class="personal-card">
                     <div class="personal-image">
-                        <img src="/api/placeholder/400/320" alt="Hiking in Blue Mountains" />
-                    </div>
-                    <div class="personal-content">
-                        <h3 class="personal-title">Hiking</h3>
-                        <p>Exploring the Blue Mountains and coastal walks around Sydney. Nothing clears the mind like a challenging trail with breathtaking views.</p>
-                    </div>
-                </div>
-                
-                <div class="personal-card">
-                    <div class="personal-image">
-                        <img src="/api/placeholder/400/320" alt="Playing basketball" />
+                        <img src="/api/placeholder/400/320" alt="Basketball" />
                     </div>
                     <div class="personal-content">
                         <h3 class="personal-title">Basketball</h3>
-                        <p>Playing in a local recreational league. Basketball teaches teamwork and quick decision-making - skills that translate well to collaborative data science.</p>
+                        <p>Playing basketball regularly helps me maintain physical fitness and develop teamwork skills. I enjoy both the competitive and social aspects of the game.</p>
                     </div>
                 </div>
                 
                 <div class="personal-card">
                     <div class="personal-image">
-                        <img src="/api/placeholder/400/320" alt="Photography sample" />
+                        <img src="/api/placeholder/400/320" alt="Drawing" />
                     </div>
                     <div class="personal-content">
-                        <h3 class="personal-title">Photography</h3>
-                        <p>Capturing patterns in urban and natural environments. Photography has sharpened my eye for detail and visual storytelling.</p>
+                        <h3 class="personal-title">Drawing</h3>
+                        <p>Drawing allows me to express creativity and observe the world more carefully. This artistic outlet complements my analytical work in data science.</p>
                     </div>
                 </div>
                 
                 <div class="personal-card">
                     <div class="personal-image">
-                        <img src="/api/placeholder/400/320" alt="Cooking spices and ingredients" />
+                        <img src="/api/placeholder/400/320" alt="Reading" />
                     </div>
                     <div class="personal-content">
-                        <h3 class="personal-title">Cooking</h3>
-                        <p>Experimenting with cuisines from around the world. Cooking is like data science - combining different elements to create something greater than the sum of its parts.</p>
+                        <h3 class="personal-title">Reading</h3>
+                        <p>I'm an avid reader of both fiction and non-fiction books. Reading expands my perspectives and keeps me informed about new developments in technology and science.</p>
+                    </div>
+                </div>
+                
+                <div class="personal-card">
+                    <div class="personal-image">
+                        <img src="/api/placeholder/400/320" alt="Yoga" />
+                    </div>
+                    <div class="personal-content">
+                        <h3 class="personal-title">Yoga</h3>
+                        <p>Practicing yoga helps me maintain mental clarity and physical flexibility. It provides a perfect balance to the intensive mental work of data science and keeps me centered.</p>
                     </div>
                 </div>
             </div>
@@ -712,7 +1035,7 @@
             
             <div class="social-links">
                 <a href="https://github.com/leiyangleiyang09/ml-bigData-projects" class="social-link" target="_blank">GitHub</a>
-                <a href="https://www.linkedin.com/in/lei-yang-data-scientist" class="social-link" target="_blank">LinkedIn</a>
+                <a href="https://www.linkedin.com/in/lei-yang-37a06018b/" class="social-link" target="_blank">LinkedIn</a>
                 <a href="tel:0430089548" class="social-link">0430089548</a>
             </div>
         </section>
@@ -721,5 +1044,252 @@
             <p>Designed & Built by Lei Yang © 2025</p>
         </footer>
     </div>
+
+    <!-- Floating Chatbot Widget -->
+    <div class="chatbot-widget">
+        <div class="chat-bubble welcome" id="chatBubble">
+            <svg class="chat-icon" viewBox="0 0 24 24">
+                <path d="M20 2H4c-1.1 0-2 .9-2 2v12c0 1.1.9 2 2 2h4l4 4 4-4h4c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2zm-2 12H6v-2h12v2zm0-3H6V9h12v2zm0-3H6V6h12v2z"/>
+            </svg>
+            <div class="notification-badge" id="notificationBadge" style="display: none;">💬</div>
+        </div>
+        
+        <div class="chat-window" id="chatWindow">
+            <div class="chat-header">
+                <div>
+                    <h3>🤖 Lei's AI Assistant</h3>
+                    <p>Ask about experience & skills</p>
+                </div>
+                <button class="close-button" id="closeButton">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
+                        <path d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/>
+                    </svg>
+                </button>
+            </div>
+            
+            <div class="chat-messages" id="chatMessages">
+                <div class="chat-message bot-message">
+                    👋 Hi! I'm Lei's AI resume assistant. I can help you learn about her experience as a Data Scientist, technical skills, or specific projects. What would you like to know?
+                </div>
+                
+                <div class="suggestion-chips" id="suggestionChips">
+                    <div class="suggestion-chip" onclick="sendSuggestion('Tell me about Lei\'s experience at NSW Department of Education')">
+                        NSW DOE Experience
+                    </div>
+                    <div class="suggestion-chip" onclick="sendSuggestion('What are Lei\'s key technical skills?')">
+                        Technical Skills
+                    </div>
+                    <div class="suggestion-chip" onclick="sendSuggestion('Tell me about the EduChat project')">
+                        EduChat Project
+                    </div>
+                    <div class="suggestion-chip" onclick="sendSuggestion('What programming languages does Lei know?')">
+                        Programming Skills
+                    </div>
+                </div>
+                
+                <div class="typing-indicator" id="typingIndicator">
+                    <div class="typing-dots">
+                        <span></span>
+                        <span></span>
+                        <span></span>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="chat-input-container">
+                <div class="chat-input-wrapper">
+                    <textarea 
+                        id="chatInput" 
+                        class="chat-input" 
+                        placeholder="Ask about Lei's experience..."
+                        rows="1"
+                    ></textarea>
+                    <button id="chatSendButton" class="chat-send-button">
+                        <svg class="send-icon" viewBox="0 0 24 24">
+                            <path d="M2.01 21L23 12 2.01 3 2 10l15 2-15 2z"/>
+                        </svg>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // NotebookLM functionality
+        document.getElementById('createPodcastBtn').addEventListener('click', function(e) {
+            e.preventDefault();
+            document.getElementById('notebookLmEmbed').style.display = 'block';
+        });
+        
+        document.getElementById('closeNotebookLmBtn').addEventListener('click', function() {
+            document.getElementById('notebookLmEmbed').style.display = 'none';
+        });
+
+        // Resume Chatbot functionality
+        class ResumeChatbot {
+            constructor() {
+                this.isOpen = false;
+                this.hasInteracted = false;
+                this.BACKEND_URL = 'http://localhost:5000'; // Change to your deployed backend URL
+                
+                this.initializeElements();
+                this.bindEvents();
+                this.showWelcomeNotification();
+            }
+            
+            initializeElements() {
+                this.chatBubble = document.getElementById('chatBubble');
+                this.chatWindow = document.getElementById('chatWindow');
+                this.closeButton = document.getElementById('closeButton');
+                this.chatMessages = document.getElementById('chatMessages');
+                this.chatInput = document.getElementById('chatInput');
+                this.sendButton = document.getElementById('chatSendButton');
+                this.typingIndicator = document.getElementById('typingIndicator');
+                this.notificationBadge = document.getElementById('notificationBadge');
+                this.suggestionChips = document.getElementById('suggestionChips');
+            }
+            
+            bindEvents() {
+                this.chatBubble.addEventListener('click', () => this.toggleChat());
+                this.closeButton.addEventListener('click', () => this.closeChat());
+                this.sendButton.addEventListener('click', () => this.sendMessage());
+                
+                this.chatInput.addEventListener('keydown', (e) => {
+                    if (e.key === 'Enter' && !e.shiftKey) {
+                        e.preventDefault();
+                        this.sendMessage();
+                    }
+                });
+                
+                this.chatInput.addEventListener('input', () => this.autoResizeInput());
+                
+                // Close chat when clicking outside
+                document.addEventListener('click', (e) => {
+                    if (this.isOpen && !e.target.closest('.chatbot-widget')) {
+                        this.closeChat();
+                    }
+                });
+            }
+            
+            showWelcomeNotification() {
+                setTimeout(() => {
+                    if (!this.hasInteracted) {
+                        this.notificationBadge.style.display = 'flex';
+                    }
+                }, 3000);
+            }
+            
+            toggleChat() {
+                if (this.isOpen) {
+                    this.closeChat();
+                } else {
+                    this.openChat();
+                }
+            }
+            
+            openChat() {
+                this.isOpen = true;
+                this.hasInteracted = true;
+                this.chatWindow.classList.add('show');
+                this.chatBubble.classList.add('active');
+                this.notificationBadge.style.display = 'none';
+                this.chatInput.focus();
+                this.scrollToBottom();
+            }
+            
+            closeChat() {
+                this.isOpen = false;
+                this.chatWindow.classList.remove('show');
+                this.chatBubble.classList.remove('active');
+            }
+            
+            autoResizeInput() {
+                this.chatInput.style.height = 'auto';
+                this.chatInput.style.height = Math.min(this.chatInput.scrollHeight, 80) + 'px';
+            }
+            
+            scrollToBottom() {
+                setTimeout(() => {
+                    this.chatMessages.scrollTop = this.chatMessages.scrollHeight;
+                }, 100);
+            }
+            
+            addMessage(text, type) {
+                const messageDiv = document.createElement('div');
+                messageDiv.className = `chat-message ${type === 'user' ? 'user-message' : type === 'error' ? 'error-message' : 'bot-message'}`;
+                messageDiv.textContent = text;
+                
+                // Insert before typing indicator
+                this.chatMessages.insertBefore(messageDiv, this.typingIndicator);
+                this.scrollToBottom();
+                
+                // Hide suggestion chips after first interaction
+                if (type === 'user' && this.suggestionChips) {
+                    this.suggestionChips.style.display = 'none';
+                }
+            }
+            
+            showTypingIndicator() {
+                this.typingIndicator.style.display = 'block';
+                this.scrollToBottom();
+            }
+            
+            hideTypingIndicator() {
+                this.typingIndicator.style.display = 'none';
+            }
+            
+            async sendMessage(message = null) {
+                const text = message || this.chatInput.value.trim();
+                if (!text) return;
+                
+                // Clear input and disable send button
+                this.chatInput.value = '';
+                this.chatInput.style.height = 'auto';
+                this.sendButton.disabled = true;
+                
+                // Add user message
+                this.addMessage(text, 'user');
+                this.showTypingIndicator();
+                
+                try {
+                    const response = await fetch(`${this.BACKEND_URL}/chat`, {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                        },
+                        body: JSON.stringify({ message: text })
+                    });
+                    
+                    if (!response.ok) {
+                        throw new Error(`HTTP error! status: ${response.status}`);
+                    }
+                    
+                    const data = await response.json();
+                    this.hideTypingIndicator();
+                    this.addMessage(data.response, 'bot');
+                    
+                } catch (error) {
+                    console.error('Error:', error);
+                    this.hideTypingIndicator();
+                    this.addMessage('Sorry, I\'m having trouble connecting right now. Please try again later.', 'error');
+                }
+                
+                this.sendButton.disabled = false;
+                this.chatInput.focus();
+            }
+        }
+        
+        // Global function for suggestion chips
+        function sendSuggestion(text) {
+            if (window.chatbot) {
+                window.chatbot.sendMessage(text);
+            }
+        }
+        
+        // Initialize chatbot when page loads
+        document.addEventListener('DOMContentLoaded', () => {
+            window.chatbot = new ResumeChatbot();
+        });
+    </script>
 </body>
 </html>
