@@ -3,7 +3,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Lei Yang | Data Scientist</title>
+    <title>Lei Yang | Data Scientist - Enhanced</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/3.9.1/chart.min.js"></script>
     <style>
         :root {
             --primary: #f5f1ec;
@@ -93,27 +94,39 @@
             color: var(--text-light);
         }
         
+        /* Enhanced Hero Section */
         .hero {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 4rem;
+            align-items: center;
+            min-height: 90vh;
+            padding: 4rem 0;
+        }
+        
+        .hero-content {
             display: flex;
             flex-direction: column;
             justify-content: center;
-            min-height: 90vh;
         }
         
-        .hero h1 {
-            font-size: 4rem;
+        .hero-content h1 {
+            font-size: 3.5rem;
             margin-bottom: 0.5rem;
+            color: var(--text);
         }
         
-        .hero h2 {
-            font-size: 3rem;
+        .hero-content h2 {
+            font-size: 2.5rem;
             margin-bottom: 1.5rem;
+            color: var(--secondary);
         }
         
-        .hero p {
-            max-width: 600px;
-            font-size: 1.2rem;
+        .hero-content p {
+            max-width: 500px;
+            font-size: 1.1rem;
             margin-bottom: 2rem;
+            color: var(--text-light);
         }
         
         .button {
@@ -126,11 +139,175 @@
             text-decoration: none;
             font-size: 0.9rem;
             transition: all 0.3s;
+            width: fit-content;
         }
         
         .button:hover {
             background-color: var(--secondary);
             color: white;
+        }
+        
+        .hero-visuals {
+            display: flex;
+            flex-direction: column;
+            gap: 2rem;
+        }
+        
+        .visual-card {
+            background: white;
+            border-radius: 12px;
+            padding: 1.5rem;
+            box-shadow: 0 8px 24px rgba(0,0,0,0.1);
+            transition: transform 0.3s ease;
+        }
+        
+        .visual-card:hover {
+            transform: translateY(-5px);
+        }
+        
+        .visual-header {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            margin-bottom: 1rem;
+        }
+        
+        .visual-icon {
+            width: 20px;
+            height: 20px;
+            background: var(--secondary);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 12px;
+            font-weight: bold;
+        }
+        
+        .visual-title {
+            font-size: 1rem;
+            font-weight: 600;
+            color: var(--text);
+        }
+        
+        .chart-container {
+            position: relative;
+            height: 200px;
+            width: 100%;
+        }
+        
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 1rem;
+            margin-top: 1rem;
+        }
+        
+        .stat-item {
+            text-align: center;
+            padding: 1rem;
+            background: var(--primary);
+            border-radius: 8px;
+        }
+        
+        .stat-number {
+            font-size: 1.5rem;
+            font-weight: bold;
+            color: var(--secondary);
+        }
+        
+        .stat-label {
+            font-size: 0.8rem;
+            color: var(--text-light);
+            margin-top: 0.25rem;
+        }
+        
+        .word-cloud-container {
+            height: 200px;
+            width: 100%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            overflow: hidden;
+        }
+        
+        .word-cloud {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            align-items: center;
+            gap: 8px;
+            padding: 1rem;
+            line-height: 1.2;
+        }
+        
+        .word {
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            opacity: 0;
+            animation: wordFadeIn 0.8s ease forwards;
+            padding: 2px 4px;
+            border-radius: 3px;
+        }
+        
+        .word:hover {
+            transform: scale(1.1);
+            opacity: 1 !important;
+        }
+        
+        .word:nth-child(1) { animation-delay: 0.1s; }
+        .word:nth-child(2) { animation-delay: 0.15s; }
+        .word:nth-child(3) { animation-delay: 0.2s; }
+        .word:nth-child(4) { animation-delay: 0.25s; }
+        .word:nth-child(5) { animation-delay: 0.3s; }
+        .word:nth-child(6) { animation-delay: 0.35s; }
+        .word:nth-child(7) { animation-delay: 0.4s; }
+        .word:nth-child(8) { animation-delay: 0.45s; }
+        .word:nth-child(9) { animation-delay: 0.5s; }
+        .word:nth-child(10) { animation-delay: 0.55s; }
+        .word:nth-child(11) { animation-delay: 0.6s; }
+        .word:nth-child(12) { animation-delay: 0.65s; }
+        .word:nth-child(13) { animation-delay: 0.7s; }
+        .word:nth-child(14) { animation-delay: 0.75s; }
+        .word:nth-child(15) { animation-delay: 0.8s; }
+        .word:nth-child(n+16) { animation-delay: 0.85s; }
+        
+        @keyframes wordFadeIn {
+            from {
+                opacity: 0;
+                transform: scale(0.8) translateY(10px);
+            }
+            to {
+                opacity: 0.8;
+                transform: scale(1) translateY(0);
+            }
+        }
+        
+        .typing-text {
+            display: inline-block;
+            border-right: 2px solid var(--secondary);
+            animation: blink 1s infinite;
+        }
+        
+        @keyframes blink {
+            0%, 50% { border-color: var(--secondary); }
+            51%, 100% { border-color: transparent; }
+        }
+        
+        .data-insight {
+            margin-top: 1rem;
+            padding: 1rem;
+            background: linear-gradient(135deg, #f8f9fa, #e9ecef);
+            border-radius: 8px;
+            border-left: 4px solid var(--secondary);
+        }
+        
+        .insight-text {
+            font-size: 0.85rem;
+            color: var(--text-light);
+            font-style: italic;
         }
         
         .experience-item, .project-item {
@@ -190,30 +367,6 @@
         
         .skills-category {
             margin-bottom: 2rem;
-        }
-        
-        footer {
-            text-align: center;
-            padding: 2rem 0;
-            border-top: 1px solid #e8e2d9;
-            color: var(--text-light);
-        }
-        
-        .social-links {
-            display: flex;
-            justify-content: center;
-            gap: 2rem;
-            margin: 1rem 0;
-        }
-        
-        .social-link {
-            color: var(--secondary);
-            font-size: 1.5rem;
-            transition: color 0.3s;
-        }
-        
-        .social-link:hover {
-            color: #2c4570;
         }
         
         .project-details {
@@ -648,20 +801,47 @@
             fill: white;
         }
         
-        /* Mobile responsive for chatbot */
-        @media (max-width: 480px) {
-            .chat-window {
-                width: calc(100vw - 40px);
-                height: 400px;
-                right: 20px;
-                left: 20px;
-            }
-            
-            .chatbot-widget {
-                right: 20px;
-                bottom: 20px;
+        footer {
+            text-align: center;
+            padding: 2rem 0;
+            border-top: 1px solid #e8e2d9;
+            color: var(--text-light);
+        }
+        
+        .social-links {
+            display: flex;
+            justify-content: center;
+            gap: 2rem;
+            margin: 1rem 0;
+        }
+        
+        .social-link {
+            color: var(--secondary);
+            font-size: 1.5rem;
+            transition: color 0.3s;
+        }
+        
+        .social-link:hover {
+            color: #2c4570;
+        }
+        
+        /* Animation for elements entering view */
+        .fade-in {
+            opacity: 0;
+            transform: translateY(30px);
+            animation: fadeInUp 1s ease forwards;
+        }
+        
+        @keyframes fadeInUp {
+            to {
+                opacity: 1;
+                transform: translateY(0);
             }
         }
+        
+        .visual-card:nth-child(1) { animation-delay: 0.2s; }
+        .visual-card:nth-child(2) { animation-delay: 0.4s; }
+        .visual-card:nth-child(3) { animation-delay: 0.6s; }
         
         .chat-bubble.welcome {
             animation: welcomePulse 3s ease-in-out;
@@ -674,13 +854,28 @@
             75% { transform: scale(1.05); }
         }
         
+        /* Mobile Responsive */
         @media (max-width: 768px) {
-            .hero h1 {
+            .hero {
+                grid-template-columns: 1fr;
+                gap: 2rem;
+                text-align: center;
+            }
+            
+            .hero-content h1 {
                 font-size: 2.5rem;
             }
             
-            .hero h2 {
+            .hero-content h2 {
                 font-size: 2rem;
+            }
+            
+            .hero-content p {
+                max-width: 100%;
+            }
+            
+            .stats-grid {
+                grid-template-columns: repeat(2, 1fr);
             }
             
             nav ul {
@@ -689,6 +884,18 @@
             
             .personal-section {
                 grid-template-columns: 1fr;
+            }
+            
+            .chat-window {
+                width: calc(100vw - 40px);
+                height: 400px;
+                right: 20px;
+                left: 20px;
+            }
+            
+            .chatbot-widget {
+                right: 20px;
+                bottom: 20px;
             }
         }
     </style>
@@ -711,10 +918,107 @@
         </header>
         
         <section class="hero" id="about">
-            <h1>Hi, I'm Lei Yang</h1>
-            <h2>Data Scientist</h2>
-            <p>I specialize in handling vast datasets, creating intuitive data visualizations, constructing resilient models and implementing cutting-edge AI solutions through end-to-end data science projects.</p>
-            <a href="#contact" class="button">Get In Touch</a>
+            <div class="hero-content">
+                <h1>Hi, I'm Lei Yang</h1>
+                <h2>Data Scientist</h2>
+                <p>I specialize in handling vast datasets, creating intuitive data visualizations, constructing resilient models and implementing cutting-edge AI solutions through end-to-end data science projects.</p>
+                
+                <div class="stats-grid">
+                    <div class="stat-item">
+                        <div class="stat-number">3M+</div>
+                        <div class="stat-label">Data Points Analyzed</div>
+                    </div>
+                    <div class="stat-item">
+                        <div class="stat-number">96%</div>
+                        <div class="stat-label">Model Accuracy</div>
+                    </div>
+                    <div class="stat-item">
+                        <div class="stat-number">10+</div>
+                        <div class="stat-label">ML Projects</div>
+                    </div>
+                    <div class="stat-item">
+                        <div class="stat-number">15+</div>
+                        <div class="stat-label">Technologies</div>
+                    </div>
+                </div>
+                
+                <a href="#contact" class="button" style="margin-top: 2rem;">Get In Touch</a>
+            </div>
+            
+            <div class="hero-visuals">
+                <!-- Skills Distribution Chart -->
+                <div class="visual-card fade-in">
+                    <div class="visual-header">
+                        <div class="visual-icon">📊</div>
+                        <div class="visual-title">Technical Skills Distribution</div>
+                    </div>
+                    <div class="chart-container">
+                        <canvas id="skillsChart"></canvas>
+                    </div>
+                    <div class="data-insight">
+                        <div class="insight-text">
+                            💡 Specialized in NLP & Machine Learning with strong cloud computing foundation
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Experience Timeline -->
+                <div class="visual-card fade-in">
+                    <div class="visual-header">
+                        <div class="visual-icon">☁️</div>
+                        <div class="visual-title">Cloud Architecture Experience</div>
+                    </div>
+                    <div class="chart-container">
+                        <canvas id="cloudChart"></canvas>
+                    </div>
+                    <div class="data-insight">
+                        <div class="insight-text">
+                            ☁️ Multi-cloud expertise spanning Azure, AWS, and Microsoft Fabric platforms
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Word Cloud from Resume -->
+                <div class="visual-card fade-in">
+                    <div class="visual-header">
+                        <div class="visual-icon">📝</div>
+                        <div class="visual-title">Resume Word Cloud</div>
+                    </div>
+                    <div class="word-cloud-container">
+                        <div class="word-cloud">
+                            <span class="word" style="font-size: 32px; color: #4a6fa5;">Python</span>
+                            <span class="word" style="font-size: 28px; color: #2c4570;">Machine Learning</span>
+                            <span class="word" style="font-size: 30px; color: #4a6fa5;">Data</span>
+                            <span class="word" style="font-size: 26px; color: #6b7fa5;">NLP</span>
+                            <span class="word" style="font-size: 24px; color: #2c4570;">SQL</span>
+                            <span class="word" style="font-size: 28px; color: #4a6fa5;">Analysis</span>
+                            <span class="word" style="font-size: 22px; color: #6b7fa5;">Azure</span>
+                            <span class="word" style="font-size: 26px; color: #2c4570;">OpenAI</span>
+                            <span class="word" style="font-size: 20px; color: #6b7fa5;">Docker</span>
+                            <span class="word" style="font-size: 24px; color: #4a6fa5;">Models</span>
+                            <span class="word" style="font-size: 18px; color: #2c4570;">AWS</span>
+                            <span class="word" style="font-size: 22px; color: #6b7fa5;">Fabric</span>
+                            <span class="word" style="font-size: 20px; color: #4a6fa5;">Chatbot</span>
+                            <span class="word" style="font-size: 26px; color: #2c4570;">Classification</span>
+                            <span class="word" style="font-size: 18px; color: #6b7fa5;">Validation</span>
+                            <span class="word" style="font-size: 24px; color: #4a6fa5;">Educational</span>
+                            <span class="word" style="font-size: 16px; color: #2c4570;">Transformers</span>
+                            <span class="word" style="font-size: 22px; color: #6b7fa5;">Datasets</span>
+                            <span class="word" style="font-size: 20px; color: #4a6fa5;">Automated</span>
+                            <span class="word" style="font-size: 18px; color: #2c4570;">BigQuery</span>
+                            <span class="word" style="font-size: 16px; color: #6b7fa5;">Researchers</span>
+                            <span class="word" style="font-size: 24px; color: #4a6fa5;">Text</span>
+                            <span class="word" style="font-size: 14px; color: #2c4570;">Deployment</span>
+                            <span class="word" style="font-size: 18px; color: #6b7fa5;">Pipeline</span>
+                        </div>
+                    </div>
+                    <div class="data-insight">
+                        <div class="insight-text">
+                            📝 Most frequent terms from resume: emphasis on NLP, ML, and cloud technologies
+                        </div>
+                    </div>
+                </div>
+            </div>
         </section>
         
         <section id="experience">
@@ -1006,8 +1310,6 @@
                     </div>
                 </div>
                 
-            
-                
                 <div class="personal-card">
                     <div class="personal-image">
                         <img src="images/yoga.png" alt="Yoga" />
@@ -1107,6 +1409,119 @@
     </div>
 
     <script>
+        // Skills Distribution Radar Chart
+        const skillsCtx = document.getElementById('skillsChart').getContext('2d');
+        new Chart(skillsCtx, {
+            type: 'radar',
+            data: {
+                labels: ['Python/SQL', 'Machine Learning', 'NLP', 'Cloud Platforms', 'Data Visualization', 'Big Data'],
+                datasets: [{
+                    label: 'Skill Level',
+                    data: [95, 90, 95, 85, 80, 75],
+                    backgroundColor: 'rgba(74, 111, 165, 0.2)',
+                    borderColor: 'rgba(74, 111, 165, 1)',
+                    borderWidth: 2,
+                    pointBackgroundColor: 'rgba(74, 111, 165, 1)',
+                    pointBorderColor: '#fff',
+                    pointHoverBackgroundColor: '#fff',
+                    pointHoverBorderColor: 'rgba(74, 111, 165, 1)'
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: {
+                        display: false
+                    }
+                },
+                scales: {
+                    r: {
+                        beginAtZero: true,
+                        max: 100,
+                        ticks: {
+                            display: false
+                        },
+                        grid: {
+                            color: 'rgba(74, 111, 165, 0.1)'
+                        },
+                        pointLabels: {
+                            font: {
+                                size: 11
+                            },
+                            color: '#666666'
+                        }
+                    }
+                }
+            }
+        });
+
+        // Cloud Architecture Pie Chart
+        const cloudCtx = document.getElementById('cloudChart').getContext('2d');
+        new Chart(cloudCtx, {
+            type: 'doughnut',
+            data: {
+                labels: ['Microsoft Azure', 'AWS Services', 'MS Fabric', 'Power BI', 'SQL Server'],
+                datasets: [{
+                    data: [30, 25, 20, 15, 10],
+                    backgroundColor: [
+                        'rgba(74, 111, 165, 0.8)',
+                        'rgba(255, 159, 64, 0.8)',
+                        'rgba(75, 192, 192, 0.8)',
+                        'rgba(153, 102, 255, 0.8)',
+                        'rgba(255, 99, 132, 0.8)'
+                    ],
+                    borderColor: [
+                        'rgba(74, 111, 165, 1)',
+                        'rgba(255, 159, 64, 1)',
+                        'rgba(75, 192, 192, 1)',
+                        'rgba(153, 102, 255, 1)',
+                        'rgba(255, 99, 132, 1)'
+                    ],
+                    borderWidth: 2
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: {
+                        position: 'bottom',
+                        labels: {
+                            font: {
+                                size: 10
+                            },
+                            color: '#666666',
+                            usePointStyle: true,
+                            padding: 10
+                        }
+                    }
+                },
+                cutout: '50%'
+            }
+        });
+
+        // Add typing effect to the title
+        document.addEventListener('DOMContentLoaded', function() {
+            const title = document.querySelector('.hero-content h2');
+            const text = title.textContent;
+            title.textContent = '';
+            title.classList.add('typing-text');
+            
+            let i = 0;
+            function typeWriter() {
+                if (i < text.length) {
+                    title.textContent += text.charAt(i);
+                    i++;
+                    setTimeout(typeWriter, 100);
+                } else {
+                    title.classList.remove('typing-text');
+                }
+            }
+            
+            setTimeout(typeWriter, 1000);
+        });
+
         // NotebookLM functionality
         document.getElementById('createPodcastBtn').addEventListener('click', function(e) {
             e.preventDefault();
@@ -1122,7 +1537,6 @@
             constructor() {
                 this.isOpen = false;
                 this.hasInteracted = false;
-                //this.BACKEND_URL = 'http://localhost:5000'; // Change to your deployed backend URL
                 this.BACKEND_URL = 'https://web-production-3adf.up.railway.app';
                 this.initializeElements();
                 this.bindEvents();
