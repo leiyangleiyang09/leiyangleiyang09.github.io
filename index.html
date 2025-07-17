@@ -1739,169 +1739,270 @@
         });
 
         // Resume Chatbot functionality
+
         class ResumeChatbot {
-            constructor() {
-                this.isOpen = false;
-                this.hasInteracted = false;
-                this.BACKEND_URL = 'https://web-production-3adf.up.railway.app';
-                this.initializeElements();
-                this.bindEvents();
-                this.showWelcomeNotification();
-            }
-            
-            initializeElements() {
-                this.chatBubble = document.getElementById('chatBubble');
-                this.chatWindow = document.getElementById('chatWindow');
-                this.closeButton = document.getElementById('closeButton');
-                this.chatMessages = document.getElementById('chatMessages');
-                this.chatInput = document.getElementById('chatInput');
-                this.sendButton = document.getElementById('chatSendButton');
-                this.typingIndicator = document.getElementById('typingIndicator');
-                this.notificationBadge = document.getElementById('notificationBadge');
-                this.suggestionChips = document.getElementById('suggestionChips');
-            }
-            
-            bindEvents() {
-                this.chatBubble.addEventListener('click', () => this.toggleChat());
-                this.closeButton.addEventListener('click', () => this.closeChat());
-                this.sendButton.addEventListener('click', () => this.sendMessage());
-                
-                this.chatInput.addEventListener('keydown', (e) => {
-                    if (e.key === 'Enter' && !e.shiftKey) {
-                        e.preventDefault();
-                        this.sendMessage();
-                    }
-                });
-                
-                this.chatInput.addEventListener('input', () => this.autoResizeInput());
-                
-                // Close chat when clicking outside
-                document.addEventListener('click', (e) => {
-                    if (this.isOpen && !e.target.closest('.chatbot-widget')) {
-                        this.closeChat();
-                    }
-                });
-            }
-            
-            showWelcomeNotification() {
-                setTimeout(() => {
-                    if (!this.hasInteracted) {
-                        this.notificationBadge.style.display = 'flex';
-                    }
-                }, 3000);
-            }
-            
-            toggleChat() {
-                if (this.isOpen) {
-                    this.closeChat();
-                } else {
-                    this.openChat();
-                }
-            }
-            
-            openChat() {
-                this.isOpen = true;
-                this.hasInteracted = true;
-                this.chatWindow.classList.add('show');
-                this.chatBubble.classList.add('active');
-                this.notificationBadge.style.display = 'none';
-                this.chatInput.focus();
-                this.scrollToBottom();
-            }
-            
-            closeChat() {
-                this.isOpen = false;
-                this.chatWindow.classList.remove('show');
-                this.chatBubble.classList.remove('active');
-            }
-            
-            autoResizeInput() {
-                this.chatInput.style.height = 'auto';
-                this.chatInput.style.height = Math.min(this.chatInput.scrollHeight, 80) + 'px';
-            }
-            
-            scrollToBottom() {
-                setTimeout(() => {
-                    this.chatMessages.scrollTop = this.chatMessages.scrollHeight;
-                }, 100);
-            }
-            
-            addMessage(text, type) {
-                const messageDiv = document.createElement('div');
-                messageDiv.className = `chat-message ${type === 'user' ? 'user-message' : type === 'error' ? 'error-message' : 'bot-message'}`;
-                messageDiv.textContent = text;
-                
-                // Insert before typing indicator
-                this.chatMessages.insertBefore(messageDiv, this.typingIndicator);
-                this.scrollToBottom();
-                
-                // Hide suggestion chips after first interaction
-                if (type === 'user' && this.suggestionChips) {
-                    this.suggestionChips.style.display = 'none';
-                }
-            }
-            
-            showTypingIndicator() {
-                this.typingIndicator.style.display = 'block';
-                this.scrollToBottom();
-            }
-            
-            hideTypingIndicator() {
-                this.typingIndicator.style.display = 'none';
-            }
-            
-            async sendMessage(message = null) {
-                const text = message || this.chatInput.value.trim();
-                if (!text) return;
-                
-                // Clear input and disable send button
-                this.chatInput.value = '';
-                this.chatInput.style.height = 'auto';
-                this.sendButton.disabled = true;
-                
-                // Add user message
-                this.addMessage(text, 'user');
-                this.showTypingIndicator();
-                
-                try {
-                    const response = await fetch(`${this.BACKEND_URL}/chat`, {
-                        method: 'POST',
-                        headers: {
-                            'Content-Type': 'application/json',
-                        },
-                        body: JSON.stringify({ message: text })
-                    });
-                    
-                    if (!response.ok) {
-                        throw new Error(`HTTP error! status: ${response.status}`);
-                    }
-                    
-                    const data = await response.json();
-                    this.hideTypingIndicator();
-                    this.addMessage(data.response, 'bot');
-                    
-                } catch (error) {
-                    console.error('Error:', error);
-                    this.hideTypingIndicator();
-                    this.addMessage('Sorry, I\'m having trouble connecting right now. Please try again later.', 'error');
-                }
-                
-                this.sendButton.disabled = false;
-                this.chatInput.focus();
-            }
-        }
+    constructor() {
+        console.log('🤖 Initializing ResumeChatbot...');
+        this.isOpen = false;
+        this.hasInteracted = false;
+        this.BACKEND_URL = 'https://web-production-3adf.up.railway.app';
         
-        // Global function for suggestion chips
-        function sendSuggestion(text) {
-            if (window.chatbot) {
-                window.chatbot.sendMessage(text);
-            }
-        }
+        // Small delay to ensure DOM is ready
+        setTimeout(() => {
+            this.initializeElements();
+            this.bindEvents();
+            this.showWelcomeNotification();
+            console.log('✅ ResumeChatbot initialized successfully');
+        }, 100);
+    }
+    
+    initializeElements() {
+        this.chatBubble = document.getElementById('chatBubble');
+        this.chatWindow = document.getElementById('chatWindow');
+        this.closeButton = document.getElementById('closeButton');
+        this.chatMessages = document.getElementById('chatMessages');
+        this.chatInput = document.getElementById('chatInput');
+        this.sendButton = document.getElementById('chatSendButton');
+        this.typingIndicator = document.getElementById('typingIndicator');
+        this.notificationBadge = document.getElementById('notificationBadge');
+        this.suggestionChips = document.getElementById('suggestionChips');
         
-        // Initialize chatbot when page loads
-        document.addEventListener('DOMContentLoaded', () => {
-            window.chatbot = new ResumeChatbot();
+        console.log('Elements found:', {
+            bubble: !!this.chatBubble,
+            window: !!this.chatWindow,
+            close: !!this.closeButton
         });
-    </script>
+        
+        if (!this.chatBubble || !this.chatWindow) {
+            console.error('❌ Critical elements missing!');
+            return false;
+        }
+        
+        return true;
+    }
+    
+    bindEvents() {
+        if (!this.chatBubble) {
+            console.error('❌ Cannot bind events - chatBubble not found');
+            return;
+        }
+        
+        // Fixed click event with proper event handling
+        this.chatBubble.addEventListener('click', (e) => {
+            console.log('🖱️ Chat bubble clicked!');
+            e.preventDefault();
+            e.stopPropagation();
+            this.toggleChat();
+        });
+        
+        if (this.closeButton) {
+            this.closeButton.addEventListener('click', (e) => {
+                console.log('❌ Close button clicked!');
+                e.preventDefault();
+                e.stopPropagation();
+                this.closeChat();
+            });
+        }
+        
+        if (this.sendButton) {
+            this.sendButton.addEventListener('click', () => this.sendMessage());
+        }
+        
+        if (this.chatInput) {
+            this.chatInput.addEventListener('keydown', (e) => {
+                if (e.key === 'Enter' && !e.shiftKey) {
+                    e.preventDefault();
+                    this.sendMessage();
+                }
+            });
+            
+            this.chatInput.addEventListener('input', () => this.autoResizeInput());
+        }
+        
+        // Close chat when clicking outside
+        document.addEventListener('click', (e) => {
+            if (this.isOpen && !e.target.closest('.chatbot-widget')) {
+                this.closeChat();
+            }
+        });
+        
+        console.log('✅ Event listeners bound successfully');
+    }
+    
+    showWelcomeNotification() {
+        setTimeout(() => {
+            if (!this.hasInteracted) {
+                if (this.notificationBadge) {
+                    this.notificationBadge.style.display = 'flex';
+                }
+            }
+        }, 3000);
+    }
+    
+    toggleChat() {
+        console.log('🔄 Toggle chat called, current state:', this.isOpen);
+        
+        if (this.isOpen) {
+            this.closeChat();
+        } else {
+            this.openChat();
+        }
+    }
+    
+    openChat() {
+        console.log('📂 Opening chat...');
+        this.isOpen = true;
+        this.hasInteracted = true;
+        
+        if (this.chatWindow) {
+            this.chatWindow.classList.add('show');
+            console.log('✅ Chat window opened');
+        }
+        
+        if (this.chatBubble) {
+            this.chatBubble.classList.add('active');
+        }
+        
+        if (this.notificationBadge) {
+            this.notificationBadge.style.display = 'none';
+        }
+        
+        if (this.chatInput) {
+            this.chatInput.focus();
+        }
+        
+        this.scrollToBottom();
+    }
+    
+    closeChat() {
+        console.log('📁 Closing chat...');
+        this.isOpen = false;
+        
+        if (this.chatWindow) {
+            this.chatWindow.classList.remove('show');
+        }
+        
+        if (this.chatBubble) {
+            this.chatBubble.classList.remove('active');
+        }
+    }
+    
+    autoResizeInput() {
+        if (this.chatInput) {
+            this.chatInput.style.height = 'auto';
+            this.chatInput.style.height = Math.min(this.chatInput.scrollHeight, 80) + 'px';
+        }
+    }
+    
+    scrollToBottom() {
+        setTimeout(() => {
+            if (this.chatMessages) {
+                this.chatMessages.scrollTop = this.chatMessages.scrollHeight;
+            }
+        }, 100);
+    }
+    
+    addMessage(text, type) {
+        const messageDiv = document.createElement('div');
+        messageDiv.className = `chat-message ${type === 'user' ? 'user-message' : type === 'error' ? 'error-message' : 'bot-message'}`;
+        messageDiv.textContent = text;
+        
+        // Insert before typing indicator
+        if (this.chatMessages && this.typingIndicator) {
+            this.chatMessages.insertBefore(messageDiv, this.typingIndicator);
+            this.scrollToBottom();
+        }
+        
+        // Hide suggestion chips after first interaction
+        if (type === 'user' && this.suggestionChips) {
+            this.suggestionChips.style.display = 'none';
+        }
+    }
+    
+    showTypingIndicator() {
+        if (this.typingIndicator) {
+            this.typingIndicator.style.display = 'block';
+            this.scrollToBottom();
+        }
+    }
+    
+    hideTypingIndicator() {
+        if (this.typingIndicator) {
+            this.typingIndicator.style.display = 'none';
+        }
+    }
+    
+    async sendMessage(message = null) {
+        const text = message || (this.chatInput ? this.chatInput.value.trim() : '');
+        if (!text) return;
+        
+        // Clear input and disable send button
+        if (this.chatInput) {
+            this.chatInput.value = '';
+            this.chatInput.style.height = 'auto';
+        }
+        
+        if (this.sendButton) {
+            this.sendButton.disabled = true;
+        }
+        
+        // Add user message
+        this.addMessage(text, 'user');
+        this.showTypingIndicator();
+        
+        try {
+            const response = await fetch(`${this.BACKEND_URL}/chat`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({ message: text })
+            });
+            
+            if (!response.ok) {
+                throw new Error(`HTTP error! status: ${response.status}`);
+            }
+            
+            const data = await response.json();
+            this.hideTypingIndicator();
+            this.addMessage(data.response, 'bot');
+            
+        } catch (error) {
+            console.error('Error:', error);
+            this.hideTypingIndicator();
+            this.addMessage('Sorry, I\'m having trouble connecting right now. Please try again later.', 'error');
+        }
+        
+        if (this.sendButton) {
+            this.sendButton.disabled = false;
+        }
+        
+        if (this.chatInput) {
+            this.chatInput.focus();
+        }
+    }
+}
+
+// Global function for suggestion chips
+function sendSuggestion(text) {
+    if (window.chatbot) {
+        window.chatbot.sendMessage(text);
+    }
+}
+
+// Initialize chatbot when page loads
+document.addEventListener('DOMContentLoaded', () => {
+    console.log('📄 DOM Content Loaded');
+    
+    setTimeout(() => {
+        try {
+            window.chatbot = new ResumeChatbot();
+            console.log('🎉 Chatbot initialization complete');
+        } catch (error) {
+            console.error('💥 Chatbot initialization failed:', error);
+        }
+    }, 500);
+});
+</script>
 </body>
 </html>
