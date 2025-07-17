@@ -1729,7 +1729,7 @@
         });
 
         // NotebookLM functionality
-        //document.getElementById('createPodcastBtn').addEventListener('click', function(e) {
+        document.getElementById('createPodcastBtn').addEventListener('click', function(e) {
             e.preventDefault();
             document.getElementById('notebookLmEmbed').style.display = 'block';
         });
@@ -1901,13 +1901,7 @@
         // Initialize chatbot when page loads
         document.addEventListener('DOMContentLoaded', () => {
             window.chatbot = new ResumeChatbot();
-
-// Backup initialization if DOM already loaded
-if (document.readyState === "complete" || document.readyState === "interactive") {
-    if (!window.chatbot) {
-        window.chatbot = new ResumeChatbot();
-    }
-}        });
+        });
     </script>
 </body>
 </html>
