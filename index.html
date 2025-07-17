@@ -1551,7 +1551,7 @@
             <svg class="chat-icon" viewBox="0 0 24 24">
                 <path d="M20 2H4c-1.1 0-2 .9-2 2v12c0 1.1.9 2 2 2h4l4 4 4-4h4c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2zm-2 12H6v-2h12v2zm0-3H6V9h12v2zm0-3H6V6h12v2z"/>
             </svg>
-            <div class="notification-badge" id="notificationBadge">💬</div>
+            <div class="notification-badge" id="notificationBadge" style="display: none;">💬</div>
         </div>
         
         <div class="chat-window" id="chatWindow">
@@ -1739,189 +1739,168 @@
         });
 
         // Resume Chatbot functionality
-// Simple chatbot setup - FIXED VERSION
-document.addEventListener('DOMContentLoaded', function() {
-    console.log('🤖 Starting chatbot setup...');
-    
-    // Get all elements
-    const chatBubble = document.getElementById('chatBubble');
-    const chatWindow = document.getElementById('chatWindow');
-    const closeButton = document.getElementById('closeButton');
-    const chatInput = document.getElementById('chatInput');
-    const sendButton = document.getElementById('chatSendButton');
-    const notificationBadge = document.getElementById('notificationBadge');
-    
-    console.log('🔍 Elements check:', {
-        chatBubble: !!chatBubble,
-        chatWindow: !!chatWindow,
-        closeButton: !!closeButton,
-        notificationBadge: !!notificationBadge
-    });
-    
-    // Chat state
-    let isOpen = false;
-    let hasInteracted = false;
-    
-    // FORCE show the notification badge immediately for testing
-    if (notificationBadge) {
-        notificationBadge.style.display = 'flex';
-        notificationBadge.style.visibility = 'visible';
-        console.log('🔴 Notification badge should be visible now');
-    } else {
-        console.error('❌ Notification badge element not found!');
-    }
-    
-    // Show notification after 3 seconds (backup)
-    setTimeout(() => {
-        if (!hasInteracted && notificationBadge) {
-            notificationBadge.style.display = 'flex';
-            notificationBadge.style.visibility = 'visible';
-            console.log('🔴 Delayed notification badge shown');
-        }
-    }, 3000);
-    
-    // Chat bubble click - FIXED
-    if (chatBubble) {
-        chatBubble.addEventListener('click', function(e) {
-            e.preventDefault();
-            e.stopPropagation();
-            console.log('💬 Chat bubble clicked!');
-            
-            hasInteracted = true;
-            
-            // Hide notification badge
-            if (notificationBadge) {
-                notificationBadge.style.display = 'none';
-                console.log('🔴 Notification badge hidden');
+        class ResumeChatbot {
+            constructor() {
+                this.isOpen = false;
+                this.hasInteracted = false;
+                this.BACKEND_URL = 'https://web-production-3adf.up.railway.app';
+                this.initializeElements();
+                this.bindEvents();
+                this.showWelcomeNotification();
             }
             
-            // Toggle chat window
-            if (isOpen) {
-                // Close chat
-                chatWindow?.classList.remove('show');
-                chatBubble?.classList.remove('active');
-                isOpen = false;
-                console.log('📱 Chat closed');
-            } else {
-                // Open chat
-                chatWindow?.classList.add('show');
-                chatBubble?.classList.add('active');
-                chatInput?.focus();
-                isOpen = true;
-                console.log('📱 Chat opened');
+            initializeElements() {
+                this.chatBubble = document.getElementById('chatBubble');
+                this.chatWindow = document.getElementById('chatWindow');
+                this.closeButton = document.getElementById('closeButton');
+                this.chatMessages = document.getElementById('chatMessages');
+                this.chatInput = document.getElementById('chatInput');
+                this.sendButton = document.getElementById('chatSendButton');
+                this.typingIndicator = document.getElementById('typingIndicator');
+                this.notificationBadge = document.getElementById('notificationBadge');
+                this.suggestionChips = document.getElementById('suggestionChips');
             }
-        });
-        console.log('✅ Chat bubble click handler added');
-    } else {
-        console.error('❌ Chat bubble not found!');
-    }
-    
-    // Close button
-    if (closeButton) {
-        closeButton.addEventListener('click', function(e) {
-            e.preventDefault();
-            e.stopPropagation();
-            console.log('❌ Close button clicked');
             
-            chatWindow?.classList.remove('show');
-            chatBubble?.classList.remove('active');
-            isOpen = false;
-        });
-        console.log('✅ Close button handler added');
-    }
-    
-    // Send message function
-    async function sendMessage(text) {
-        if (!text?.trim()) return;
-        console.log('📤 Sending:', text);
-        
-        const chatMessages = document.getElementById('chatMessages');
-        const typingIndicator = document.getElementById('typingIndicator');
-        
-        if (!chatMessages) {
-            console.error('❌ Chat messages container not found');
-            return;
-        }
-        
-        // Add user message
-        const userMsg = document.createElement('div');
-        userMsg.className = 'chat-message user-message';
-        userMsg.textContent = text.trim();
-        chatMessages.insertBefore(userMsg, typingIndicator);
-        
-        // Show typing
-        if (typingIndicator) typingIndicator.style.display = 'block';
-        chatMessages.scrollTop = chatMessages.scrollHeight;
-        
-        // Hide suggestion chips
-        const suggestionChips = document.getElementById('suggestionChips');
-        if (suggestionChips) suggestionChips.style.display = 'none';
-        
-        try {
-            const response = await fetch('https://web-production-3adf.up.railway.app/chat', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ message: text.trim() })
-            });
-            
-            if (typingIndicator) typingIndicator.style.display = 'none';
-            
-            if (!response.ok) throw new Error(`HTTP ${response.status}`);
-            
-            const data = await response.json();
-            
-            // Add bot response
-            const botMsg = document.createElement('div');
-            botMsg.className = 'chat-message bot-message';
-            botMsg.textContent = data.response;
-            chatMessages.insertBefore(botMsg, typingIndicator);
-            
-            console.log('✅ Bot responded');
-            
-        } catch (error) {
-            console.error('❌ Chat error:', error);
-            if (typingIndicator) typingIndicator.style.display = 'none';
-            
-            const errorMsg = document.createElement('div');
-            errorMsg.className = 'chat-message error-message';
-            errorMsg.textContent = 'Connection error. Please try again.';
-            chatMessages.insertBefore(errorMsg, typingIndicator);
-        }
-        
-        chatMessages.scrollTop = chatMessages.scrollHeight;
-    }
-    
-    // Send button & Enter key
-    if (sendButton && chatInput) {
-        sendButton.addEventListener('click', function() {
-            const text = chatInput.value.trim();
-            if (text) {
-                sendMessage(text);
-                chatInput.value = '';
+            bindEvents() {
+                this.chatBubble.addEventListener('click', () => this.toggleChat());
+                this.closeButton.addEventListener('click', () => this.closeChat());
+                this.sendButton.addEventListener('click', () => this.sendMessage());
+                
+                this.chatInput.addEventListener('keydown', (e) => {
+                    if (e.key === 'Enter' && !e.shiftKey) {
+                        e.preventDefault();
+                        this.sendMessage();
+                    }
+                });
+                
+                this.chatInput.addEventListener('input', () => this.autoResizeInput());
+                
+                // Close chat when clicking outside
+                document.addEventListener('click', (e) => {
+                    if (this.isOpen && !e.target.closest('.chatbot-widget')) {
+                        this.closeChat();
+                    }
+                });
             }
-        });
-        
-        chatInput.addEventListener('keydown', function(e) {
-            if (e.key === 'Enter' && !e.shiftKey) {
-                e.preventDefault();
-                const text = chatInput.value.trim();
-                if (text) {
-                    sendMessage(text);
-                    chatInput.value = '';
+            
+            showWelcomeNotification() {
+                setTimeout(() => {
+                    if (!this.hasInteracted) {
+                        this.notificationBadge.style.display = 'flex';
+                    }
+                }, 3000);
+            }
+            
+            toggleChat() {
+                if (this.isOpen) {
+                    this.closeChat();
+                } else {
+                    this.openChat();
                 }
             }
-        });
-        console.log('✅ Send handlers added');
-    }
-    
-    // Global function for suggestion chips
-    window.sendSuggestion = function(text) {
-        console.log('💡 Suggestion clicked:', text);
-        sendMessage(text);
-    };
-    
-    console.log('🎉 Chatbot setup complete!');
-});
+            
+            openChat() {
+                this.isOpen = true;
+                this.hasInteracted = true;
+                this.chatWindow.classList.add('show');
+                this.chatBubble.classList.add('active');
+                this.notificationBadge.style.display = 'none';
+                this.chatInput.focus();
+                this.scrollToBottom();
+            }
+            
+            closeChat() {
+                this.isOpen = false;
+                this.chatWindow.classList.remove('show');
+                this.chatBubble.classList.remove('active');
+            }
+            
+            autoResizeInput() {
+                this.chatInput.style.height = 'auto';
+                this.chatInput.style.height = Math.min(this.chatInput.scrollHeight, 80) + 'px';
+            }
+            
+            scrollToBottom() {
+                setTimeout(() => {
+                    this.chatMessages.scrollTop = this.chatMessages.scrollHeight;
+                }, 100);
+            }
+            
+            addMessage(text, type) {
+                const messageDiv = document.createElement('div');
+                messageDiv.className = `chat-message ${type === 'user' ? 'user-message' : type === 'error' ? 'error-message' : 'bot-message'}`;
+                messageDiv.textContent = text;
+                
+                // Insert before typing indicator
+                this.chatMessages.insertBefore(messageDiv, this.typingIndicator);
+                this.scrollToBottom();
+                
+                // Hide suggestion chips after first interaction
+                if (type === 'user' && this.suggestionChips) {
+                    this.suggestionChips.style.display = 'none';
+                }
+            }
+            
+            showTypingIndicator() {
+                this.typingIndicator.style.display = 'block';
+                this.scrollToBottom();
+            }
+            
+            hideTypingIndicator() {
+                this.typingIndicator.style.display = 'none';
+            }
+            
+            async sendMessage(message = null) {
+                const text = message || this.chatInput.value.trim();
+                if (!text) return;
+                
+                // Clear input and disable send button
+                this.chatInput.value = '';
+                this.chatInput.style.height = 'auto';
+                this.sendButton.disabled = true;
+                
+                // Add user message
+                this.addMessage(text, 'user');
+                this.showTypingIndicator();
+                
+                try {
+                    const response = await fetch(`${this.BACKEND_URL}/chat`, {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                        },
+                        body: JSON.stringify({ message: text })
+                    });
+                    
+                    if (!response.ok) {
+                        throw new Error(`HTTP error! status: ${response.status}`);
+                    }
+                    
+                    const data = await response.json();
+                    this.hideTypingIndicator();
+                    this.addMessage(data.response, 'bot');
+                    
+                } catch (error) {
+                    console.error('Error:', error);
+                    this.hideTypingIndicator();
+                    this.addMessage('Sorry, I\'m having trouble connecting right now. Please try again later.', 'error');
+                }
+                
+                this.sendButton.disabled = false;
+                this.chatInput.focus();
+            }
+        }
+        
+        // Global function for suggestion chips
+        function sendSuggestion(text) {
+            if (window.chatbot) {
+                window.chatbot.sendMessage(text);
+            }
+        }
+        
+        // Initialize chatbot when page loads
+        document.addEventListener('DOMContentLoaded', () => {
+            window.chatbot = new ResumeChatbot();
 
 // Backup initialization if DOM already loaded
 if (document.readyState === "complete" || document.readyState === "interactive") {
